@@ -1,0 +1,35 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.plan.research'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.ow2.asm:asm:9.7'
+}
+
+tasks.register('agentJar', Jar) {
+    archiveBaseName = 'coverage-agent'
+    archiveClassifier = 'agent'
+
+    from sourceSets.main.output
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    manifest {
+        attributes(
+                'Premain-Class': 'org.plan.research.CoverageAgent',
+                'Can-Redefine-Classes': 'true',
+                'Can-Retransform-Classes': 'true'
+        )
+    }
+
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}
