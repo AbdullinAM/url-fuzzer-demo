@@ -19,6 +19,18 @@ open class MutationFuzzer {
         timeout: Duration = Duration.INFINITE,
         mutationsPerAttempt: IntRange
     ) {
-        TODO("Not yet implemented")
+        var attempts = 0
+        val startTime = System.currentTimeMillis()
+        while (System.currentTimeMillis() - startTime < timeout.inWholeMilliseconds) {
+            ++attempts
+            var candidate = seeds.random(random)
+            repeat(mutationsPerAttempt.random(random)) {
+                candidate = mutator.mutate(candidate)
+            }
+
+            if (target(candidate) == ExecutionResult.FAIL) {
+                println("Attempt $attempts, found error on input $candidate")
+            }
+        }
     }
 }
