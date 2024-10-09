@@ -5,3 +5,4 @@ plugins {
 rootProject.name = "url-fuzzer"
 include("instrumentation")
 include("fuzzer")
+include("search-based-fuzzer")
