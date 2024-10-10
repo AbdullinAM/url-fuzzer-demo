@@ -102,19 +102,52 @@ fun String.neighborStrings(): List<String> = buildList {
 fun normalize(x: Int) = x.toDouble() / (x + 1)
 
 fun callCgiDecode(s: String): Double {
+    BranchDistance.distancesTrue.clear()
+    BranchDistance.distancesFalse.clear()
+
     var fitness = 0.0
     try {
-        CgiDecoder2().cgiDecode(s)
+        CgiDecoder2().cgiDecodeInstrumented(s)
     } catch (e: Throwable) {
     }
 
-    // TODO
+    val trueScores = setOf("i < s.length", "c == '+'", "c == '%'", "hexValues.containsKey(digitHigh)", "hexValues.containsKey(digitLow)")
+    val falseScores = setOf("c == '%'", "hexValues.containsKey(digitHigh)", "hexValues.containsKey(digitLow)")
+    for (id in trueScores) {
+        fitness += normalize(BranchDistance.distancesTrue[id] ?: 1)
+    }
+    for (id in falseScores) {
+        fitness += normalize(BranchDistance.distancesFalse[id] ?: 1)
+    }
 
     return fitness
 }
 
 fun hillclimbCgi() {
-    TODO("")
+    val random = Random.Default
+    var current = random.randomString(4)
+    var minDistance = callCgiDecode(current)
+    println(
+        "Distance: $minDistance, $current"
+    )
+    while (minDistance != 0.0) {
+        println(
+            "Distance: $minDistance, $current"
+        )
+        for (neighbour in current.neighborStrings()) {
+            val newDistance = callCgiDecode(neighbour)
+            if (distance < minDistance) {
+                minDistance = newDistance
+                current = neighbour
+                println(
+                    "New Distance: $minDistance, $current"
+                )
+            }
+        }
+        println(
+            "Distance: $minDistance, $current"
+        )
+    }
 }
 
 fun main() {

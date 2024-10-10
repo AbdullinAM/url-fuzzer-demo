@@ -28,15 +28,19 @@ object BranchDistance {
             Operation.EQUALS -> {
                 if (lhs == rhs) {
                     distanceFalse = 1
+                    distanceTrue = 0
                 } else {
                     distanceTrue = abs((lhsValue - rhsValue).toDouble()).toInt()
+                    distanceFalse = 0
                 }
             }
             Operation.LESS -> {
                 if (lhsValue < rhsValue) {
                     distanceFalse = rhsValue - lhsValue
+                    distanceTrue = 0
                 } else {
                     distanceTrue = lhsValue - rhsValue + 1
+                    distanceFalse = 0
                 }
             }
             Operation.IN -> {
@@ -52,6 +56,8 @@ object BranchDistance {
                     distanceTrue = minimum
                     if (distanceTrue == 0) {
                         distanceFalse = 1
+                    } else {
+                        distanceFalse = 0
                     }
                 }
             }
