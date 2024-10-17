@@ -31,6 +31,11 @@ fun crossover(lhv: Species, rhv: Species): Pair<Species, Species> = TODO()
  */
 fun Species.mutate(): Species = TODO()
 
+/***
+ * Generate a new population from the existing one
+ */
+fun EvaluatedPopulation.generateNewPopulation(random: Random): Population = TODO()
+
 
 /***
  * Implement a search-based fuzzer that uses genetic search algorithm
