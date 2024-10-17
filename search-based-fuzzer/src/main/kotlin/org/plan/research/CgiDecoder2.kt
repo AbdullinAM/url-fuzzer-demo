@@ -81,12 +81,6 @@ class CgiDecoder2 {
     }
 }
 
-fun Random.randomString(length: Int): String = buildString {
-    for (i in 0 until length) {
-        append((nextInt(95) + 32).toChar())
-    }
-}
-
 fun String.neighborStrings(): List<String> = buildList {
     for (pos in this@neighborStrings.indices) {
         val c = this@neighborStrings[pos]
