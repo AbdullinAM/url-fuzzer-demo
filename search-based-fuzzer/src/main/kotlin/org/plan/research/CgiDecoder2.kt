@@ -105,43 +105,60 @@ fun callCgiDecode(s: String): Double {
     } catch (e: Throwable) {
     }
 
-    val trueScores = setOf("i < s.length", "c == '+'", "c == '%'", "hexValues.containsKey(digitHigh)", "hexValues.containsKey(digitLow)")
-    val falseScores = setOf("c == '%'", "hexValues.containsKey(digitHigh)", "hexValues.containsKey(digitLow)")
+    val trueScores = setOf(
+        "i < s.length",
+        "c == '%'",
+        "hexValues.containsKey(digitHigh)",
+        "hexValues.containsKey(digitLow)",
+    )
+    val falseScores = setOf(
+        "c == '+'",
+    )
     for (id in trueScores) {
-        fitness += normalize(BranchDistance.distancesTrue[id] ?: 1)
+        fitness += BranchDistance.distancesTrue[id]?.let { normalize(it) } ?: 1.0
     }
     for (id in falseScores) {
-        fitness += normalize(BranchDistance.distancesFalse[id] ?: 1)
+        fitness += BranchDistance.distancesFalse[id]?.let { normalize(it) } ?: 1.0
     }
 
     return fitness
 }
 
 fun hillclimbCgi() {
-    val random = Random.Default
-    var current = random.randomString(4)
+    var iterations = 0
+    val random = Random(System.currentTimeMillis())
+    var current = random.randomUnicodeString(10)
     var minDistance = callCgiDecode(current)
-    println(
-        "Distance: $minDistance, $current"
-    )
+//    println(
+//        "Distance: $minDistance, $current"
+//    )
     while (minDistance != 0.0) {
-        println(
-            "Distance: $minDistance, $current"
-        )
+//        println(
+//            "Distance: $minDistance, $current"
+//        )
+        var changed = false
         for (neighbour in current.neighborStrings()) {
             val newDistance = callCgiDecode(neighbour)
-            if (distance < minDistance) {
+            if (newDistance < minDistance) {
+                changed = true
                 minDistance = newDistance
                 current = neighbour
-                println(
-                    "New Distance: $minDistance, $current"
-                )
+//                println(
+//                    "New Distance: $minDistance, $current"
+//                )
             }
         }
-        println(
-            "Distance: $minDistance, $current"
-        )
+        if (!changed) {
+            current = random.randomUnicodeString(10)
+            minDistance = callCgiDecode(current)
+//            println("New seed: $current")
+        }
+        ++iterations
+//        println(
+//            "Distance: $minDistance, $current"
+//        )
     }
+    println("Search ended in $iterations iterations")
 }
 
 fun main() {
